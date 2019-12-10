@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
-import { store } from './store'
+import store from './store'
 
 Vue.config.productionTip = false
 
@@ -9,14 +9,14 @@ Vue.config.productionTip = false
  * To add a filter in a component, add it same as
  * methods or computed values
  */
-Vue.filter("uppercase", function(value) {
-  if (!value) return "";
+Vue.filter('uppercase', function(value) {
+  if (!value) return '';
 
   return value.toUpperCase();
 });
 
-Vue.filter("lowercase", function(value) {
-  if (!value) return "";
+Vue.filter('lowercase', function(value) {
+  if (!value) return '';
 
   return value.toLowerCase();
 });
