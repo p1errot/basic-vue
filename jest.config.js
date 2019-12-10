@@ -3,7 +3,8 @@ module.exports = {
   collectCoverage: true,
   collectCoverageFrom: [
     '<rootDir>/src/**/*.{js,vue}',
-    '!<rootDir>/src/__test__/**/*',
+    '!<rootDir>/src/__tests__/**/*',
+    '!<rootDir>/src/main.js'
   ],
   moduleFileExtensions: ['js', 'jsx', 'json', 'vue'],
   transform: {
@@ -17,6 +18,6 @@ module.exports = {
   },
   snapshotSerializers: ['jest-serializer-vue'],
   testMatch: [
-    '<rootDir>/(tests/unit/**/*.spec.(js|jsx|ts|tsx)|**/__tests__/*.(js|jsx|ts|tsx))'
+    '<rootDir>/(tests/unit/**/*.spec.(js|jsx|ts|tsx)|**/__tests__(*|/**)/*.(js|jsx|ts|tsx))'
   ],
 }
