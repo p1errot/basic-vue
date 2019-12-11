@@ -1,6 +1,6 @@
 <template>
   <section class="data-section">
-    <h1 v-pin="methodForScroll">{{ title | uppercase }}</h1>
+    <h1 v-pin="handleScroll">{{ title | uppercase }}</h1>
     <div class="section-img">
       <img :src="image">
     </div>
@@ -39,7 +39,15 @@ export default {
     }
   },
   methods: {
-    methodForScroll: function(event, el) {
+    handleResponseData([imageResp, dataResp]) {
+      const image = imageResp.items[0].link;
+      const data = dataResp.parse.text["*"];
+
+      this.$set(this, "image", image);
+      this.$set(this, "data", data);
+      this.$emit("onDataUpdated", false);
+    },
+    handleScroll(event, el) {
       const shouldBePinned = window.scrollY >= 200;
       el.classList.toggle("pinned", shouldBePinned);
     },
@@ -57,14 +65,9 @@ export default {
       const image = this.getImageData(term);
       const data = this.getData(term);
 
-      Promise.all([image, data]).then(([imageResp, dataResp]) => {
-        const image = imageResp.items[0].link;
-        const data = dataResp.parse.text["*"];
-
-        this.$set(this, "image", image);
-        this.$set(this, "data", data);
-        this.$emit("onDataUpdated", false);
-      });
+      Promise
+        .all([image, data])
+        .then(this.handleResponseData);
     }
   }
 };

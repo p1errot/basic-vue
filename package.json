@@ -29,6 +29,8 @@
   "eslintConfig": {
     "root": true,
     "env": {
+      "jasmine": true,
+      "jest": true,
       "node": true
     },
     "extends": [
@@ -44,10 +46,7 @@
         "files": [
           "**/__tests__/*.{j,t}s?(x)",
           "**/tests/unit/**/*.spec.{j,t}s?(x)"
-        ],
-        "env": {
-          "jest": true
-        }
+        ]
       }
     ]
   },
