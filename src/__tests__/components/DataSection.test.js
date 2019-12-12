@@ -47,6 +47,23 @@ describe('DataSection component', () => {
     });
   });
 
+  describe('handleResponseData', () => {
+    it('should update image and data', () => {
+      const instance = wrapper.vm;
+      const data = 'text';
+      const image = 'image-link';
+      const dataResponse = { parse: { text: { '*': data } } };
+      const imageResponse = { items: [{ link: image }]};
+
+      instance.handleResponseData([imageResponse, dataResponse]);
+      const eventEmitted = wrapper.emitted('onDataUpdated')[0];
+
+      expect(instance.data).toEqual(data);
+      expect(instance.image).toEqual(image);
+      expect(eventEmitted).toEqual([false]);
+    });
+  });
+
   describe('handleScroll', () => {
     it('should update element class', () => {
       const element = {
@@ -85,13 +102,22 @@ describe('DataSection component', () => {
       const getData = jest.spyOn(wrapper.vm, 'getData');
       const getImageData = jest.spyOn(wrapper.vm, 'getImageData');
 
-      getData.mockResolvedValue({ parse: { text: { '*': 'text' } } });
-      getImageData.mockResolvedValue({ items: [{ link: 'image-link' }]});
+      wrapper.setMethods({ handleResponseData: jest.fn() });
+
+      window.Promise = {
+        all: jest.fn(() => ({
+            then: function(callback) {
+              callback.apply(this, arguments);
+            }
+          })
+        )
+      };
 
       wrapper.vm.fetchData('term');
 
       expect(getData).toHaveBeenCalledTimes(1);
       expect(getImageData).toHaveBeenCalledTimes(1);
+      expect(wrapper.vm.handleResponseData.mock.calls.length).toBe(1);
     });
   });
 });
