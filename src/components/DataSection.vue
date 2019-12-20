@@ -28,6 +28,9 @@ export default {
       return this.term;
     }
   },
+  created() {
+    this.fetchData(this.term);
+  },
   watch: {
     term(newTerm, oldTerm) {
       const isNotEmpty = !!newTerm;
@@ -36,7 +39,7 @@ export default {
       if (isNotEmpty && isDifferent) {
         this.fetchData(newTerm);
       }
-    }
+    },
   },
   methods: {
     handleResponseData([imageResp, dataResp]) {
@@ -45,7 +48,7 @@ export default {
 
       this.$set(this, "image", image);
       this.$set(this, "data", data);
-      this.$emit("onDataUpdated", false);
+      this.$store.commit("toggleLoader", false);
     },
     handleScroll(event, el) {
       const shouldBePinned = window.scrollY >= 200;

@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <page-header :image="header.image" :items="header.menu" @onChangeItem="updateTerm"/>
-    <data-section :term="term" @onDataUpdated="toggleLoader"/>
+    <router-view>
+      <data-section v-if="term" :term="term" />
+    </router-view>
     <page-footer/>
     <transition name="fade" mode="out-in">
       <loader v-if="loader"/>
@@ -26,6 +28,9 @@ export default {
   computed: {
     loader() {
       return this.$store.state.loader;
+    },
+    term() {
+      return this.$store.state.term;
     }
   },
   data() {
@@ -55,23 +60,35 @@ export default {
             active: false
           }
         ]
-      },
-      term: ""
+      }
     };
   },
+  created() {
+    this.checkCurrentRoute();
+  },
+  watch: {
+    $route(to) {
+      const { term: newTerm } = to.params;
+      this.updateTerm(newTerm);
+    }
+  },
   methods: {
-    updateTerm(term) {
-      const isSameTerm = term === this.term;
+    checkCurrentRoute() {
+      const currentRoute = this.$route.name;
 
-      if (isSameTerm) {
+      if (currentRoute !== 'index') {
         return;
       }
 
-      this.toggleLoader();
-      this.term = term;
+      const defaultTerm = this.header.menu[0];
+      const termValue = this.$options.filters.toURL(defaultTerm.title);
+
+      this.$store.commit('updateTerm', defaultTerm.title);
+      this.$router.replace(`/term/${termValue}`);
     },
-    toggleLoader(action) {
-      this.$store.commit("toggleLoader", action);
+    updateTerm(term) {
+      this.$store.commit('updateTerm', term);
+      this.$store.commit("toggleLoader", true);
     }
   }
 };

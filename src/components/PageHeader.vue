@@ -9,8 +9,14 @@
           v-for="item in items"
           :key="item.id"
           :class="(item.active ? 'active' : '')"
-          @click="handleMenuItem($event, item.id)"
-        >{{ item.title }}</li>
+          @click="handleMenuItem($event, item)"
+        >
+          <router-link
+            :to="{ name: 'data', params: { term: $options.filters.toURL(item.title) }}"
+          >
+            {{ item.title }}
+          </router-link>
+        </li>
       </ul>
     </nav>
   </header>
@@ -24,30 +30,31 @@ export default {
     items: Array
   },
   created() {
-    const defautlItem = this.items[0];
-
-    this.$set(defautlItem, "active", true);
-    this.$emit("onChangeItem", defautlItem.title);
+    this.checkRoute();
   },
-  watch: {
-    items() {
-      const defautlItem = this.items[0];
-
-      this.$set(defautlItem, "active", true);
-      this.$emit("onChangeItem", defautlItem.title);
+  computed: {
+    menuItems() {
+      return this.items;
     }
   },
   methods: {
-    handleMenuItem(e, id) {
-      const clickedEl = this.items.find(el => el.id === id);
-      const menuItems = this.items;
+    checkRoute() {
+      const routeTermRegex = new RegExp(this.$route.params.term, 'gi');
+      const activeRouteItem = this.menuItems.find(item => item.title.match(routeTermRegex)) || {};
+      const defaultActiveItem = this.menuItems.find(item => item.active);
+      const activeItem = this.menuItems.find(item => item.id === activeRouteItem.id) || defaultActiveItem;
+
+      this.handleMenuItem({}, activeItem);
+    },
+    handleMenuItem(e, item) {
+      const menuItems = this.menuItems;
 
       menuItems.forEach((el, index) => {
         this.$set(menuItems[index], "active", false);
       });
 
-      this.$set(clickedEl, "active", true);
-      this.$emit("onChangeItem", clickedEl.title);
+      this.$set(item, "active", true);
+      this.$emit("onChangeItem", item.title);
     }
   }
 };
@@ -83,18 +90,30 @@ header {
       padding: 0;
 
       li {
+        display: block;
+        position: relative;
+
+        &.active::before {
+          content: "";
+          border-bottom: 4px solid #fc2f70;
+          bottom: 0;
+          display: block;
+          height: 0;
+          position: absolute;
+          width: 100%;
+        }
+      }
+
+      li a {
         border: none;
         color: white;
+        display: block;
         font-family: inherit;
         font-size: inherit;
         outline: none;
         padding: calc(0.5em + 4px) 1em 0.5em;
         position: relative;
         z-index: 1;
-
-        &.active {
-          border-bottom: 4px solid #fc2f70;
-        }
 
         &::before {
           content: "";

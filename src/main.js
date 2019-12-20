@@ -1,6 +1,7 @@
-import Vue from 'vue'
-import App from './App.vue'
-import store from './store'
+import Vue from 'vue';
+import App from './App.vue';
+import router from './router';
+import store from './store';
 
 Vue.config.productionTip = false
 
@@ -21,6 +22,12 @@ Vue.filter('lowercase', function(value) {
   return value.toLowerCase();
 });
 
+Vue.filter('toURL', function(value) {
+  if (!value) return '';
+
+  return encodeURI(value.toLowerCase());
+});
+
 /*
  * Check https://vuejs.org/v2/guide/custom-directive.html
  * for custom directives
@@ -38,5 +45,6 @@ Vue.directive("pin", {
 
 new Vue({
   render: h => h(App),
+  router,
   store,
 }).$mount('#app')
